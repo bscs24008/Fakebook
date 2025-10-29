@@ -1,31 +1,89 @@
 #pragma once
 #include "User.h"
+#include <iostream>
+using namespace std;
 
 struct FriendNode {
     User* friendUser;
     FriendNode* next;
+    FriendNode* prev;
 };
 
 struct UserNode {
     User* user;
     FriendNode* friendsHead;
+    FriendNode* friendsTail;
     UserNode* next;
+    UserNode* prev;
 };
 
 class FriendNetwork {
 private:
     UserNode* head;
+    UserNode* tail;
 
-public:
-    FriendNetwork() : head(nullptr) {}
+    void add_to_friend_list(UserNode* owner, User* newFriend) {
+        if (!owner || !newFriend) return;
 
-    void add_user(User* newUser) {
-        UserNode* node = new UserNode{ newUser, nullptr, nullptr };
-        node->next = head;
-        head = node;
+        FriendNode* curr = owner->friendsHead;
+        if (owner->user == newFriend)
+            return;
+        while (curr) {
+            if (curr->friendUser == newFriend)
+                return;
+            curr = curr->next;
+        }
+        FriendNode* f = new FriendNode{ newFriend, nullptr, nullptr };
+        if (!owner->friendsHead) {
+            owner->friendsHead = owner->friendsTail = f;
+        }
+        else {
+            owner->friendsTail->next = f;
+            f->prev = owner->friendsTail;
+            owner->friendsTail = f;
+        }
     }
 
-    UserNode* findUserNode(User* user) {
+    void remove_from_friend_list(UserNode* owner, User* friendUser) {
+        if (!owner || !friendUser) 
+            return;
+        FriendNode* curr = owner->friendsHead;
+        while (curr) {
+            if (curr->friendUser == friendUser) {
+                if (curr->prev)
+                    curr->prev->next = curr->next;
+                else
+                    owner->friendsHead = curr->next;
+
+                if (curr->next)
+                    curr->next->prev = curr->prev;
+                else
+                    owner->friendsTail = curr->prev;
+
+                delete curr;
+                return;
+            }
+            curr = curr->next;
+        }
+    }
+
+
+public:
+    FriendNetwork() : head(nullptr), tail(nullptr) {}
+
+    void add_user(User* newUser) {
+        UserNode* node = new UserNode{ newUser, nullptr, nullptr, nullptr, nullptr };
+        if (!head) {
+            head = tail = node;
+        }
+        else {
+            tail->next = node;
+            node->prev = tail;
+            tail = node;
+        }
+    }
+
+    UserNode* find_user(User* user) {
         UserNode* curr = head;
         while (curr) {
             if (curr->user == user) return curr;
@@ -34,84 +92,66 @@ public:
         return nullptr;
     }
 
+    void add_friendship(User* user1, User* user2) {
+        UserNode* u1 = find_user(user1);
+        UserNode* u2 = find_user(user2);
+        if (!u1 || !u2 || user1 == user2) return;
+
+        add_to_friend_list(u1, user2);
+        add_to_friend_list(u2, user1);
+    }
+
+    void delete_friendship(User* user1, User* user2) {
+        UserNode* u1 = find_user(user1);
+        UserNode* u2 = find_user(user2);
+        if (!u1 || !u2) return;
+
+        remove_from_friend_list(u1, user2);
+        remove_from_friend_list(u2, user1);
+    }
+
     void delete_user(User* user) {
+        UserNode* target = find_user(user);
+        if (!target) 
+            return;
+
         UserNode* curr = head;
         while (curr) {
             if (curr->user != user)
-                delete_friend(curr->user, user);
+                remove_from_friend_list(curr, user);
             curr = curr->next;
         }
 
-        UserNode** ptr = &head;
-        while (*ptr) {
-            if ((*ptr)->user == user) {
-                UserNode* temp = *ptr;
-                *ptr = (*ptr)->next;
+        if (target->prev)
+            target->prev->next = target->next;
+        else
+            head = target->next;
 
-                FriendNode* f = temp->friendsHead;
-                while (f) {
-                    FriendNode* t = f;
-                    f = f->next;
-                    delete t;
-                }
-                delete temp->user;
-                delete temp;
-                return;
-            }
-            ptr = &((*ptr)->next);
-        }
-    }
+        if (target->next)
+            target->next->prev = target->prev;
+        else
+            tail = target->prev;
 
-    void add_friend(User* user, User* friendUser) {
-        UserNode* uNode = findUserNode(user);
-        UserNode* fNode = findUserNode(friendUser);
-        if (!uNode || !fNode) return;
-
-        FriendNode* f1 = new FriendNode{ friendUser, uNode->friendsHead };
-        uNode->friendsHead = f1;
-
-        FriendNode* f2 = new FriendNode{ user, fNode->friendsHead };
-        fNode->friendsHead = f2;
-    }
-
-    void delete_friend(User* user, User* friendUser) {
-        UserNode* uNode = findUserNode(user);
-        UserNode* fNode = findUserNode(friendUser);
-        if (!uNode || !fNode) return;
-
-        FriendNode** curr = &uNode->friendsHead;
-        while (*curr) {
-            if ((*curr)->friendUser == friendUser) {
-                FriendNode* temp = *curr;
-                *curr = (*curr)->next;
-                delete temp;
-                break;
-            }
-            curr = &((*curr)->next);
+        FriendNode* f = target->friendsHead;
+        while (f) {
+            FriendNode* t = f;
+            f = f->next;
+            delete t;
         }
 
-        curr = &fNode->friendsHead;
-        while (*curr) {
-            if ((*curr)->friendUser == user) {
-                FriendNode* temp = *curr;
-                *curr = (*curr)->next;
-                delete temp;
-                break;
-            }
-            curr = &((*curr)->next);
-        }
+        delete target;
     }
 
     void display() {
         UserNode* curr = head;
         while (curr) {
-            std::cout << curr->user->username << "'s friends: ";
+            cout << curr->user->getusername() << "'s friends: ";
             FriendNode* f = curr->friendsHead;
             while (f) {
-                std::cout << f->friendUser->username << " ";
+                cout << f->friendUser->getusername() << " ";
                 f = f->next;
             }
-            std::cout << "\n";
+            cout << endl;
             curr = curr->next;
         }
     }
@@ -127,9 +167,8 @@ public:
                 f = f->next;
                 delete t;
             }
-            delete temp->user;
+
             delete temp;
         }
     }
 };
-

@@ -88,4 +88,7 @@ public:
 		cout << "Age: " << age << endl;
 		cout << "Is public" << is_public << endl;
 	}
+	string getusername(){
+		return username;
+	}
 };
