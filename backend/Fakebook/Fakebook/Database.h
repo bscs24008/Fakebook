@@ -3,6 +3,7 @@
 #include "FriendNetwork.h"
 #include "Post.h"
 #include <vector>
+#include <algorithm>
 
 class Database {
 private:
@@ -52,7 +53,7 @@ private:
     FriendNode* getfriendshead(User* usr) {
         network.getfriendshead(usr);
     }
-
+    friend class DummyDataGenerator;
 public:
 
     void addUser(const string& un, const string& e,
@@ -116,7 +117,7 @@ public:
         return posts;
     }
     ~Database() { 
-        for (int i = 0; i < users.size(); i++)
+        for (auto i = 0; i < users.size(); i++)
             delete users[i];
     }
 };
