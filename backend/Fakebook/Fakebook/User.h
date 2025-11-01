@@ -4,9 +4,10 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <algorithm>
+#include "Post.h"
 using namespace std;
 
-class Post;
 class User
 {
 private:
@@ -111,7 +112,7 @@ public:
 	}
 	void add_recieved_request(User* usr) {
 		for (int i = 0; i < recieved_requests.size(); i++) {
-			if (usr == sent_requests[i])
+			if (usr == recieved_requests[i])
 				return;
 		}
 		recieved_requests.push_back(usr);
