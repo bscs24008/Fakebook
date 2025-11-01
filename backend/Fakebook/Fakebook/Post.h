@@ -40,7 +40,7 @@ public:
 		cout << "Photo / Video: " << url << endl;
 	}
 	void saveToFile(const string& filename) {
-		ofstream out(filename);
+		ofstream out(filename, ios::app);
 		out << author << "#" << text << "#" << timestamp << "#" << url << endl;
 		out.close();
 	}
