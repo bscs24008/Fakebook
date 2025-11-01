@@ -16,13 +16,12 @@ private:
 	string gender;
 	int age;
 	bool is_public;
+	int num_friends;
 	vector<Post*> posts;
+	vector<User*> sent_requests;
+	vector<User*> recieved_requests;
+
 public:
-	User()
-	{
-		is_public = true;
-		age = 18;
-	}
 	User(string _user, string _pass, string _email, string _loc, string _gender, int _age, bool user_type)
 	{
 		username = _user;
@@ -93,7 +92,32 @@ public:
 	string getusername(){
 		return username;
 	}
+	string getemail() {
+		return email;
+	}
 	bool check_pswrd(string p) {
 		return p == password;
+	}
+	int getNumFriends() {
+		return num_friends;
+	}
+	void add_sent_request(User* usr) {
+		sent_requests.push_back(usr);
+	}
+	void add_recieved_request(User* usr) {
+		recieved_requests.push_back(usr);
+	}
+	void remove_sent_request(User* usr) {
+		auto it = find(sent_requests.begin(), sent_requests.end(), usr);
+		if (it != sent_requests.end())
+			sent_requests.erase(it);
+	}
+	void remove_recieved_request(User* usr) {
+		auto it = find(recieved_requests.begin(), recieved_requests.end(), usr);
+		if (it != recieved_requests.end())
+			recieved_requests.erase(it);
+	}
+	vector<Post*> getPosts() {
+		return posts;
 	}
 };

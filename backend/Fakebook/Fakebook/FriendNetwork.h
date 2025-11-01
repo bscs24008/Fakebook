@@ -67,6 +67,14 @@ private:
         }
     }
 
+    UserNode* find_user(User* user) {
+        UserNode* curr = head;
+        while (curr) {
+            if (curr->user == user) return curr;
+            curr = curr->next;
+        }
+        return nullptr;
+    }
 
 public:
     FriendNetwork() : head(nullptr), tail(nullptr) {}
@@ -81,15 +89,6 @@ public:
             node->prev = tail;
             tail = node;
         }
-    }
-       
-    UserNode* find_user(User* user) {
-        UserNode* curr = head;
-        while (curr) {
-            if (curr->user == user) return curr;
-            curr = curr->next;
-        }
-        return nullptr;
     }
 
     void add_friendship(User* user1, User* user2) {
@@ -154,6 +153,14 @@ public:
             cout << endl;
             curr = curr->next;
         }
+    }
+
+    FriendNode* getfriendshead(User* usr) {
+        UserNode* u = find_user(usr);
+        if (u) {
+            return u->friendsHead;
+        }
+        return nullptr;
     }
 
     ~FriendNetwork() {
