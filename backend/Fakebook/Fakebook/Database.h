@@ -1,10 +1,8 @@
 #pragma once
-
 #include "User.h"
 #include "FriendNetwork.h"
+#include "Post.h"
 #include <vector>
-
-class Post;
 
 class Database {
 private:
