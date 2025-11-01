@@ -5,6 +5,7 @@
 #include <fstream>
 using namespace std;
 
+class Post;
 class User
 {
 private:
@@ -15,6 +16,7 @@ private:
 	string gender;
 	int age;
 	bool is_public;
+	vector<Post*> posts;
 public:
 	User()
 	{
@@ -90,5 +92,8 @@ public:
 	}
 	string getusername(){
 		return username;
+	}
+	bool check_pswrd(string p) {
+		return p == password;
 	}
 };
