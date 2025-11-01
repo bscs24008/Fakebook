@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include "Post.h"
 using namespace std;
 
 class User
