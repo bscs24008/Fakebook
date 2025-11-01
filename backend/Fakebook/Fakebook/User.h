@@ -5,7 +5,6 @@
 #include <fstream>
 using namespace std;
 
-class Post;
 class User
 {
 private:
