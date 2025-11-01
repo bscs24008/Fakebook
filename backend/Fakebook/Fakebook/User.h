@@ -102,9 +102,17 @@ public:
 		return num_friends;
 	}
 	void add_sent_request(User* usr) {
+		for (int i = 0; i < sent_requests.size(); i++) {
+			if (usr == sent_requests[i])
+				return;
+		}
 		sent_requests.push_back(usr);
 	}
 	void add_recieved_request(User* usr) {
+		for (int i = 0; i < recieved_requests.size(); i++) {
+			if (usr == sent_requests[i])
+				return;
+		}
 		recieved_requests.push_back(usr);
 	}
 	void remove_sent_request(User* usr) {
