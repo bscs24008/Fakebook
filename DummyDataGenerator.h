@@ -63,7 +63,7 @@ public:
 			string password = randomPassword();
 			int age = randomAge();
 			bool status = rand() % 2;
-			db->addUser(usernames[i], email[i], password, location[i], gender[i], age, status);
+			db->addUser(usernames[i], email[i], password, location[i], gender[i], age, status, string());
 		}
 		for (int i = 0; i < usernames.size() * 2; i++) {
 			int user1 = rand() % db->users.size();
