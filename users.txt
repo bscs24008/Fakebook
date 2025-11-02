@@ -1,0 +1,5 @@
+ahmed#12345#ahmed@example.com#male
+fatima#abcde#fatima@example.com#female
+hamza#pass123#hamza@example.com#male
+zainab#zainab2025#zainab@example.com#female
+osama#osama321#osama@example.com#male
