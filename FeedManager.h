@@ -15,12 +15,12 @@ private:
 	function<bool(Post*, Post*)> comparePosts = [](Post* p1, Post* p2) {
 		return p1->getTimeStamp() > p2->getTimeStamp();
 	};
-	Heap<Post*> Posts(comparePosts);
+	Heap<Post*> Posts;
 	stack<Post*> prev_posts;
 	Post* current_post;
 
 public:
-	FeedManager(Database *database, User *_user): db(database), user(_user), current_post(nullptr) {}
+	FeedManager(Database *database, User *_user): db(database), user(_user), current_post(nullptr), Posts(comparePosts) {	}
 
 	void refreshFeed() {
 		if (!user or !db) {
