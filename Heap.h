@@ -85,7 +85,7 @@ public:
         return data[0];
     }
 
-    void buildHeap(const vector<T>& arr) {
+    static void buildHeap(const vector<T>& arr) {
         data = arr;
         for (int i = (data.size() / 2) - 1; i >= 0; i--) {
             heapify_down(i);
