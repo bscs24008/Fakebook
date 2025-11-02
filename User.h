@@ -130,4 +130,7 @@ public:
 	vector<Post*> getPosts() {
 		return posts;
 	}
+	bool get_status() {
+		return is_public;
+	}
 };
