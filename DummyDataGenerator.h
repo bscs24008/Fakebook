@@ -26,14 +26,17 @@ private:
 		}
 		return user_password;
 	}
+
 	int randomAge() {
 		return 18 + (rand() % 70); // it shoud remain between 18 and 88
 	}
+
 	friend class Database;
 public:
 	DummyDataGenerator(Database* database) {
 		db = database;
 	}
+
 	void loadFromFile(const string& usersFile, const string& locationsFile, const string& postsFile)
 	{
 		ifstream user(usersFile);
@@ -69,6 +72,7 @@ public:
 		}
 
 	}
+
 	void testOutput() {
 		for (size_t i = 0; i < usernames.size(); i++) {
 			cout << "User: " << usernames[i] << "\n"

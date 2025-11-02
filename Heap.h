@@ -65,6 +65,10 @@ public:
         heapify_up(data.size() - 1);
     }
 
+    vector<T> getAllElements() {
+        return data;
+    }
+
     T extract() {
         if (data.empty())
             throw runtime_error("Empty Heap");
@@ -85,7 +89,7 @@ public:
         return data[0];
     }
 
-    static void buildHeap(const vector<T>& arr) {
+    void buildHeap(const vector<T>& arr) {
         data = arr;
         for (int i = (data.size() / 2) - 1; i >= 0; i--) {
             heapify_down(i);
@@ -115,6 +119,10 @@ public:
 
         reverse(sorted.begin(), sorted.end());
         return sorted;
+    }
+
+    bool empty() {
+        return data.size() == 0;
     }
 
     static void heapSort(vector<T>& vec) {
