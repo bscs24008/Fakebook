@@ -73,6 +73,9 @@ public:
         if (it != users.end())
             users.erase(it);
     }
+    User* isUser(const string& name) {
+        return find_username(name);
+    }
     User* getUserUsername(const string& un, const string& pswrd) {
         User* usr = nullptr;
         authUserUsername(un, pswrd, usr);
