@@ -20,10 +20,12 @@ private:
 	Post* current_post;
 
 public:
+	FeedManager(Database* database) : db(database) {}
+
 	FeedManager(Database *database, User *_user): db(database), user(_user), current_post(nullptr), Posts(comparePosts) {	}
 
 	void refreshFeed() {
-		if (!user or !db) {
+		if (!user || !db) {
 			cout << "User or database not available." << endl;
 			return;
 		}
