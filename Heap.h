@@ -85,7 +85,7 @@ public:
         return data[0];
     }
 
-    static void buildHeap(const vector<T>& arr) {
+    void buildHeap(const vector<T>& arr) {
         data = arr;
         for (int i = (data.size() / 2) - 1; i >= 0; i--) {
             heapify_down(i);
@@ -124,5 +124,11 @@ public:
         for (int i = (int)vec.size() - 1; i >= 0; i--) {
             vec[i] = heap.extract();
         }
+    }
+
+    bool is_empty() {
+        if (data.size() == 0)
+            return true;
+        return false;
     }
 };
