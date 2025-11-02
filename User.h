@@ -8,6 +8,15 @@
 #include "Post.h"
 using namespace std;
 
+struct PublicData {
+	string username;
+	string profile_picture;
+	vector<Post*> posts;
+	bool is_public;
+	PublicData(string _un, string p, bool _is_public, vector<Post*> _posts) : 
+		username(_un), profile_picture(p), is_public(_is_public), posts(_posts) {}
+};
+
 class User
 {
 private:
@@ -16,9 +25,9 @@ private:
 	string email;
 	string Location;
 	string gender;
+	string profile_picture;
 	int age;
 	bool is_public;
-	int num_friends;
 	vector<Post*> posts;
 	vector<User*> sent_requests;
 	vector<User*> recieved_requests;
@@ -100,9 +109,6 @@ public:
 	bool check_pswrd(string p) {
 		return p == password;
 	}
-	int getNumFriends() {
-		return num_friends;
-	}
 	void add_sent_request(User* usr) {
 		for (int i = 0; i < sent_requests.size(); i++) {
 			if (usr == sent_requests[i])
@@ -129,5 +135,14 @@ public:
 	}
 	vector<Post*> getPosts() {
 		return posts;
+	}
+	bool get_status() {
+		return is_public;
+	}
+	PublicData getPublicData() {
+		if (is_public) {
+			return PublicData(username, profile_picture, is_public, posts);
+		}
+		return PublicData(username, profile_picture, is_public, vector<Post*>());
 	}
 };

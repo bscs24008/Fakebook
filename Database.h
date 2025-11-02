@@ -100,17 +100,20 @@ public:
         }
         return posts;
     }
-    vector<Post*> getFoFPosts(User* usr) {
+    vector<Post*> getFoFPosts(User* usr) {  
         vector<Post*> posts;
         FriendNode* head1 = network.getfriendshead(usr);
         while (head1) {
             FriendNode* head2 = network.getfriendshead(head1->friendUser);
             while (head2) {
+                if (!head2->friendUser->get_status()) {
+                    head2 = head2->next;
+                    continue;
+                }
                 int s = head2->friendUser->getPosts().size();
                 for (int i = 0; i < s; i++) {
                     posts.push_back(head2->friendUser->getPosts()[i]);
                 }
-                head2 = head2->next;
             }
             head1 = head1->next;
         }

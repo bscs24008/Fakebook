@@ -133,4 +133,10 @@ public:
             vec[i] = heap.extract();
         }
     }
+
+    bool is_empty() {
+        if (data.size() == 0)
+            return true;
+        return false;
+    }
 };
