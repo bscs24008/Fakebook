@@ -5,6 +5,8 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include <chrono>
+#include <ctime>
 #include "Post.h"
 using namespace std;
 
@@ -15,6 +17,7 @@ struct PublicData {
 	bool is_public;
 	PublicData(string _un, string p, bool _is_public, vector<Post*> _posts) : 
 		username(_un), profile_picture(p), is_public(_is_public), posts(_posts) {}
+	PublicData() {}
 };
 
 class User
@@ -33,7 +36,8 @@ private:
 	vector<User*> recieved_requests;
 
 public:
-	User(string _user, string _pass, string _email, string _loc, string _gender, int _age, bool user_type)
+	User(string _user, string _pass, string _email, string _loc, 
+		string _gender, int _age, bool user_type, string profile_pic)
 	{
 		username = _user;
 		password = _pass;
@@ -41,6 +45,7 @@ public:
 		Location = _loc;
 		gender = _gender;
 		age = _age;
+		profile_picture = profile_pic;
 		is_public = user_type;
 	}
 	void operator=(const User& other)
@@ -144,5 +149,25 @@ public:
 			return PublicData(username, profile_picture, is_public, posts);
 		}
 		return PublicData(username, profile_picture, is_public, vector<Post*>());
+	}
+	void add_post(string text, time_t now_time, string url) {
+		posts.push_back(new Post(username, now_time, text, url));
+	}
+	void delete_post(Post* p) {
+		auto it = find(posts.begin(), posts.end(), p);
+		if (it != posts.end())
+			posts.erase(it);
+	}
+	string get_profile_pic() {
+		return profile_picture;
+	}
+	void set_profile_picture(string p) {
+		profile_picture = p;
+	}
+	~User() {
+		int s = posts.size();
+		for (int i = 0; i < s; i++) {
+			delete posts[i];
+		}
 	}
 };
