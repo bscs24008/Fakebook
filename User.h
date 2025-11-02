@@ -141,6 +141,12 @@ public:
 	vector<Post*> getPosts() {
 		return posts;
 	}
+	vector<User*> getSentRequests() {
+		return sent_requests;
+	}
+	vector<User*> getReceivedRequests() {
+		return recieved_requests;
+	}
 	bool get_status() {
 		return is_public;
 	}
