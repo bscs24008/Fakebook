@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/DummyDataGenerator.h
+/FeedManager.h
+/main.cpp
+/.vs
+/backend/Fakebook/.vs/Fakebook/FileContentIndex
+/backend/Fakebook/.vs/Fakebook/v17/ipch/AutoPCH
+/backend/Fakebook/.vs/Fakebook/v17
+/backend/Fakebook/Fakebook/x64/Debug/Fakebook.tlog
+/backend/Fakebook/Fakebook/x64/Debug
+/backend/Fakebook/Fakebook/Fakebook.vcxproj
+/backend/Fakebook/x64/Debug
