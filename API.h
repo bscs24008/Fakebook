@@ -1,3 +1,4 @@
+#pragma once
 #include "Database.h"
 #include "FeedManager.h"
 #include <chrono>

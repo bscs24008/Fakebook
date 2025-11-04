@@ -64,6 +64,10 @@ public:
 			text.push_back(t);
 			url.push_back(ur);
 		}
+
+		user.close();
+		loc.close();
+		post.close();
 	}
 
 	void loadIntoDatabase() {

@@ -149,6 +149,10 @@ public:
         }
         return PublicData();
     }
+    //void Save_to_file(const string& usersFile, const string& locationsFile, const string& postsFile)
+    //{
+
+    //}
     ~Database() { 
         for (auto i = 0; i < users.size(); i++)
             delete users[i];

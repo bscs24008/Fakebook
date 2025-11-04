@@ -1,37 +1,318 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include "User.h"
 #include <vector>
-
+#include "FriendNetwork.h"
+#include "Database.h"
+#include "FeedManager.h"
+#include "User.h"
+#include "Post.h"
+#include "DummyDataGenerator.h"
 using namespace std;
 
-void load_users(User*& users, int& number_of_users)
-{
-	ifstream input_file("Text.txt");
+void showMainMenu(Database& db, FeedManager& feed);
+void showUserMenu(Database& db, User* user, FeedManager& feed);
+void handleSignup(Database& db);
+User* handleLogin(Database& db);
+void handleViewProfile(Database& db, User* user);
+void handleCreatePost(Database& db, User* user);
+void handleAddFriend(Database& db, User* user);
+void handleRespondRequests(Database& db, User* user);
+void handleViewFeed(Database& db, User* user, FeedManager& feed);
+bool is_valid_email(string email);
+bool is_valid_gender(string gender);
+bool is_age_valid(int age);
 
-	input_file >> number_of_users;
+void showMainMenu(Database& db, FeedManager& feed) {
+	int choice = 0;
+	do {
+		cout << "*** FakeBook *** \n"
+			<< "1. Sign Up \n"
+			<< "2. Login \n"
+			<< "3. Exit \n"
+			<< "Enter your choice: ";
+		cin >> choice;
 
-	users = new User[number_of_users];
-	for (int i = 0; i < number_of_users; i++)
-	{
-		input_file >> users[i];
-	}
-
-	input_file.close();
+		User* loginUser;
+		switch (choice) {
+		case 1:
+			handleSignup(db);
+			break;
+		case 2:
+			loginUser = handleLogin(db);
+			if (loginUser) {
+				showUserMenu(db, loginUser, feed);
+			}
+			break;
+		case 3:
+			cout << "Exiting application...\n";
+			break;
+		default:
+			cout << "Invalid choice. Try again.\n";
+		}
+	} while (choice != 3);
 }
 
-void save_users(User*& users, const int& number_of_users)
-{
-	ofstream output_file("Text.txt");
-
-	output_file << number_of_users << endl;
-	
-	for (int i = 0; i < number_of_users; i++)
+void handleSignup(Database& db) {
+	string username, email, password, location, gender;
+	int age = 0;
+	char privacy;
+	bool isPublic;
+	cout << "--- Sign Up --- \n";
+	cout << "Enter username: "; cin >> username;
+	while (true)
 	{
-		output_file << users[i];
-		output_file << endl;
+		cout << "Enter email: "; cin >> email;
+		if (is_valid_email(email))
+		{
+			// Makes sure email is valid and username and email is unused
+			if (db.getUserUsername(username, "") || db.getUserEmail(email, "")) {
+				cout << "Username or email already in use. Try again. \n";
+			}
+			else
+			{
+				break;
+			}
+		}
+		else
+		{
+			cout << "Invalid Email! Enter again" << endl;
+		}
+
+
+	}
+	while (true)
+	{
+		cout << "Enter gender Male or Female: "; cin >> gender;
+		if (is_valid_gender(gender))
+		{
+			break;
+		}
+		cout << "Invalid gender, enter either M, Male, F, Female" << endl;
 	}
 
-	output_file.close();
+
+
+	cout << "Enter password: "; cin >> password;
+	cout << "Enter location: "; cin >> location;
+	while (true)
+	{
+		cout << "Enter age: "; cin >> age;
+		if (is_age_valid(age))
+		{
+			break;
+		}
+		else
+		{
+			cout << "Enter your real age!" << endl;
+		}
+	}
+
+	cout << "Public Profile? (y/n): "; cin >> privacy;
+	isPublic = privacy == 'y';
+	db.addUser(username, email, password, location, gender, age, isPublic, " ");
+	cout << "User created successfully! \n";
+}
+
+User* handleLogin(Database& db) {
+	cout << "--- Login --- \n";
+	cout << "1. Username \n"
+		<< "2. Email \n";
+	int choice;
+	cin >> choice;
+
+	string info, password;
+	if (choice == 1) {
+		cout << "Enter username: ";
+		cin >> info;
+	}
+	else {
+		cout << "Enter email: ";
+		cin >> info;
+	}
+	cout << "Enter password: ";
+	cin >> password;
+
+	User* user = nullptr;
+	bool succesfulLogin = false;
+
+	if (choice == 1) {
+		succesfulLogin = db.getUserUsername(info, password) != nullptr;
+		user = db.getUserUsername(info, password);
+	}
+	else {
+		succesfulLogin = db.getUserEmail(info, password) != nullptr;
+		user = db.getUserEmail(info, password);
+	}
+	if (!succesfulLogin) {
+		cout << "Invalid credentials. \n";
+		return nullptr;
+	}
+
+	cout << "Login succesfull! Welcome " << user->getusername() << "! \n";
+	return user;
+}
+
+void showUserMenu(Database& db, User* user, FeedManager& feed) {
+	int choice = 0;
+	do {
+		cout << "--- User Menu --- \n"
+			<< "1. Create Posts \n"
+			<< "2. View Profile \n"
+			<< "3. View Feed \n"
+			<< "4. Add Friend \n"
+			<< "5. Respond to Friend Requests \n"
+			<< "6. Logout \n"
+			<< "Enter your choice: ";
+		cin >> choice;
+
+		switch (choice) {
+		case 1:
+			handleCreatePost(db, user);
+			break;
+		case 2:
+			handleViewProfile(db, user);
+			break;
+		case 3:
+			handleViewFeed(db, user, feed);
+			break;
+		case 4:
+			handleAddFriend(db, user);
+			break;
+		case 5:
+			handleRespondRequests(db, user);
+			break;
+		case 6:
+			cout << "Logging out... \n";
+			break;
+		default:
+			cout << "Invalid choice. Try again. \n";
+			break;
+		}
+
+	} while (choice != 6);
+}
+
+void handleViewProfile(Database& db, User* user) {
+	cout << " --- Profile --- \n";
+	user->print();
+	vector<Post*> posts = user->getPosts();
+
+	if (posts.empty())
+		cout << "No posts yet.\n";
+	else {
+		cout << " --- Posts --- \n";
+		for (auto p : posts)
+			p->display();
+	}
+}
+
+void handleCreatePost(Database& db, User* user) {
+	cout << " --- Create Post --- \n";
+
+	string content;
+	cout << "Enter post content: ";
+	cin.ignore();
+	getline(cin, content);
+
+	time_t time_stamp = time(nullptr);
+	user->add_post(content, time_stamp, " ");
+
+	cout << "Post creted succesfully at " << time_stamp << "! \n";
+}
+
+void handleAddFriend(Database& db, User* user) {
+	cout << " --- Add Friend --- \n";
+	string username;
+	cout << "Enter username to search: ";
+	cin.ignore();
+	getline(cin, username);
+
+	User* f = db.isUser(username);
+	if (!f) {
+		cout << "User not found. \n";
+		return;
+	}
+	user->add_sent_request(f);
+	f->add_recieved_request(user);
+
+	cout << "Friend request sent to " << f->getusername() << endl;
+}
+
+void handleRespondRequests(Database& db, User* user) {
+	vector<User*> requests = user->getReceivedRequests();
+	if (requests.empty()) {
+		cout << "No pending friend requests. \n";
+		return;
+	}
+
+	for (int i = 0; i < requests.size(); i++) {
+		cout << i + 1 << ". " << requests[i]->getusername() << endl;
+	}
+	int choice;
+	cout << "Select request to respond to: ";
+	cin >> choice;
+	User* requestedBy = requests[choice - 1];
+	cout << "1. Accept \n"
+		<< "2. Decline \n"
+		<< "Enter your choice: ";
+	cin >> choice;
+
+	switch (choice) {
+	case 1:
+		db.addFriendship(user, requestedBy);
+		cout << "Friend request accepted. \n";
+		break;
+	case 2:
+		user->remove_recieved_request(requestedBy);
+		requestedBy->remove_sent_request(user);
+		cout << "Friend request declined. \n";
+		break;
+	}
+}
+
+void handleViewFeed(Database& db, User* user, FeedManager& feed) {
+	feed.setUser(user);
+	feed.refreshFeed();
+	while (feed.has_current()) {
+		feed.get_current_post()->display();
+		feed.next();
+	}
+}
+bool is_valid_email(string email)
+{
+	int size = email.size();
+
+	if (size == 0)
+	{
+		return false;
+	}
+
+	for (int i = 0; i < size; i++)
+	{
+		if (email[i] == '@' && i != 0 && i + 1 != size)
+		{
+			// if email includes @
+			// and this sequence should be neither at start nor at end 
+			return true;
+		}
+	}
+	return false;
+}
+bool is_valid_gender(string gender)
+{
+	if (gender == "Male" || gender == "M" ||  "male" || "m")
+		return true;
+	else if (gender == "Female" || gender == "F" || "female" || "f")
+		return true;
+	return false;
+}
+
+bool is_age_valid(int age)
+{
+	if (age > 0 && age < 126)// oldest person's age + 10 years just in case
+	{
+		return true;
+	}
+	return false;
 }
