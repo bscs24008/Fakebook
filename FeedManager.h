@@ -20,7 +20,7 @@ private:
 	Post* current_post;
 
 public:
-	FeedManager(Database* database) : db(database) {}
+	FeedManager(Database* database) : db(database), current_post(nullptr) {}
 
 	FeedManager(Database *database, User *_user): db(database), user(_user), current_post(nullptr), Posts(comparePosts) {	}
 
@@ -61,7 +61,11 @@ public:
 			if (current_post)
 				prev_posts.push(current_post);
 			current_post = Posts.extract();
-		}		
+		}
+		else
+		{
+			current_post = nullptr;
+		}
 	}
 
 	void prev() {
@@ -77,6 +81,10 @@ public:
 	}
 	bool has_prev() const { 
 		return !prev_posts.empty(); 
+	}
+	bool has_current()
+	{
+		return current_post != nullptr;
 	}
 
 	void setUser(User* _user) {

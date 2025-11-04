@@ -44,8 +44,16 @@ public:
 		ifstream post(postsFile);
 		string u, e, g, l, t, ur;
 
-		if (!user.is_open() or !loc.is_open() or !post.is_open()) {
-			cout << "Could not open file" << endl;
+		if (!user.is_open() ) {
+			cout << "Could not open users.txt" << endl;
+		}
+		if (!loc.is_open())
+		{
+			cout << "Could not open locations.txt" << endl;
+		}
+		if (!post.is_open())
+		{
+			cout << "Could not open posts.txt" << endl;
 		}
 
 		while (getline(user, u, '#') and getline(user, e, '#') and getline(user, g) and getline(loc, l, '\n') and getline(post, t, '#') and getline(post, ur)) {

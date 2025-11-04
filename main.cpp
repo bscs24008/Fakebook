@@ -155,6 +155,7 @@ void showUserMenu(Database &db, User* user, FeedManager &feed) {
 			break;
 		default:
 			cout << "Invalid choice. Try again. \n";
+			break;
 		}
 
 	} while (choice != 6);
@@ -241,7 +242,8 @@ void handleRespondRequests(Database& db, User* user) {
 void handleViewFeed(Database& db, User* user, FeedManager& feed) {
 	feed.setUser(user);
 	feed.refreshFeed();
-	while (feed.has_next()) {
+	while (feed.has_current()) {
+		feed.get_current_post()->display();
 		feed.next();
 	}
 }
