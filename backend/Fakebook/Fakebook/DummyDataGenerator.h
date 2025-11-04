@@ -26,25 +26,34 @@ private:
 		}
 		return user_password;
 	}
+
 	int randomAge() {
 		return 18 + (rand() % 70); // it shoud remain between 18 and 88
 	}
+
 	friend class Database;
 public:
 	DummyDataGenerator(Database* database) {
 		db = database;
 	}
+
 	void loadFromFile(const string& usersFile, const string& locationsFile, const string& postsFile)
 	{
 		ifstream user(usersFile);
 		ifstream loc(locationsFile);
 		ifstream post(postsFile);
-		string u, e, g;
-		string l;
-		string t, ur;
+		string u, e, g, l, t, ur;
 
-		if (!user.is_open() or !loc.is_open() or !post.is_open()) {
-			cout << "Could not open file" << endl;
+		if (!user.is_open() ) {
+			cout << "Could not open users.txt" << endl;
+		}
+		if (!loc.is_open())
+		{
+			cout << "Could not open locations.txt" << endl;
+		}
+		if (!post.is_open())
+		{
+			cout << "Could not open posts.txt" << endl;
 		}
 
 		while (getline(user, u, '#') and getline(user, e, '#') and getline(user, g) and getline(loc, l, '\n') and getline(post, t, '#') and getline(post, ur)) {
@@ -55,6 +64,10 @@ public:
 			text.push_back(t);
 			url.push_back(ur);
 		}
+
+		user.close();
+		loc.close();
+		post.close();
 	}
 
 	void loadIntoDatabase() {
@@ -62,7 +75,7 @@ public:
 			string password = randomPassword();
 			int age = randomAge();
 			bool status = rand() % 2;
-			db->addUser(usernames[i], email[i], password, location[i], gender[i], age, status);
+			db->addUser(usernames[i], email[i], password, location[i], gender[i], age, status, string());
 		}
 		for (int i = 0; i < usernames.size() * 2; i++) {
 			int user1 = rand() % db->users.size();
@@ -71,7 +84,8 @@ public:
 		}
 
 	}
-	void testOutput()  {
+
+	void testOutput() {
 		for (size_t i = 0; i < usernames.size(); i++) {
 			cout << "User: " << usernames[i] << "\n"
 				<< "Email: " << email[i] << "\n"
