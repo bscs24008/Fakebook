@@ -8,7 +8,7 @@
 class Database {
 private:
     FriendNetwork network;
-    vector<User*> users;
+    vector<User*> users; // this should be sorted according to names
 
     User* find_username(const string& un) {
         for (int i = 0; i < users.size(); i++) {
@@ -59,9 +59,11 @@ public:
     bool addUser(const string& un, const string& e,
         const string& pswrd, const string& loc, const string& gen,
         int age, const bool& _status, string profile_pic) { 
+
         if (check_availability(un, e)) {
+            auto position = lower_bound(users.begin(), users.end(), un, [](User* p1, const string& p2) { return p1->getusername() < p2; });
             User* usr = new User(un, pswrd, e, loc, gen, age, _status, profile_pic);
-            users.push_back(usr);
+            users.insert(position, usr);
             network.add_user(usr);
             return true;
         }
